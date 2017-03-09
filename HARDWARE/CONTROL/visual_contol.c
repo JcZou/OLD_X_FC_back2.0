@@ -158,6 +158,9 @@ head  |    1 PIT y-   90d in marker
 		nav_pos_ctrl[i].err_old = nav_pos_ctrl[i].err;
 		}
 	}
+	if(circle.check&&circle.connect)
+		yaw_qr_off=circle.yaw-Yaw;
+	
 	float Yaw_qr=To_180_degrees(Yaw+yaw_qr_off);
 	if(nav_pos_ctrl[X].mode==2){//global  Yaw from IMU
 	nav_spd_ctrl[Y].exp= nav_pos_ctrl[North].pid_out*cos(Yaw_qr*0.0173)+nav_pos_ctrl[East].pid_out*sin(Yaw_qr*0.0173); 

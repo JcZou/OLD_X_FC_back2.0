@@ -329,6 +329,16 @@
           <WinNumber>1</WinNumber>
           <ItemText>\\UCOSII_3\../HARDWARE/DRIVER/usart_fc.c\RxBuffer</ItemText>
         </Ww>
+        <Ww>
+          <count>24</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>POS_UKF_X</ItemText>
+        </Ww>
+        <Ww>
+          <count>25</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>POS_UKF_Y</ItemText>
+        </Ww>
       </WatchWindow1>
       <WatchWindow2>
         <Ww>
@@ -520,6 +530,16 @@
           <count>37</count>
           <WinNumber>2</WinNumber>
           <ItemText>ALT_VEL_BMP_EKF</ItemText>
+        </Ww>
+        <Ww>
+          <count>38</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>yaw_qr_off</ItemText>
+        </Ww>
+        <Ww>
+          <count>39</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>Yaw</ItemText>
         </Ww>
       </WatchWindow2>
       <MemoryWindow1>

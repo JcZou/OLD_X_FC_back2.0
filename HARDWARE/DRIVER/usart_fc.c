@@ -179,20 +179,20 @@ float uart_time[10];
 		reg=mode.flow_f_use_ukfm;
     sys.flow=1;
 	}		
-//  else if(*(data_buf+2)==0x12)//debug
-//  {
-//	flow_debug.en_ble_debug= *(data_buf+4);	
-//	flow_debug.ax=((int16_t)(*(data_buf+5)<<8)|*(data_buf+6));
-//	flow_debug.ay=((int16_t)(*(data_buf+7)<<8)|*(data_buf+8));
-//	flow_debug.az=((int16_t)(*(data_buf+9)<<8)|*(data_buf+10));
-//	flow_debug.gx=((int16_t)(*(data_buf+11)<<8)|*(data_buf+12));
-//	flow_debug.gy=((int16_t)(*(data_buf+13)<<8)|*(data_buf+14));
-//	flow_debug.gz=((int16_t)(*(data_buf+15)<<8)|*(data_buf+16));
-//	flow_debug.hx=((int16_t)(*(data_buf+17)<<8)|*(data_buf+18));
-//	flow_debug.hy=((int16_t)(*(data_buf+19)<<8)|*(data_buf+20));
-//  flow_debug.hz=((int16_t)(*(data_buf+21)<<8)|*(data_buf+22));
+  else if(*(data_buf+2)==0x01)//debug
+  {
+	flow_debug.en_ble_debug= *(data_buf+4);	
+	flow_debug.ax=((int16_t)(*(data_buf+5)<<8)|*(data_buf+6));
+	flow_debug.ay=((int16_t)(*(data_buf+7)<<8)|*(data_buf+8));
+	flow_debug.az=((int16_t)(*(data_buf+9)<<8)|*(data_buf+10));
+	flow_debug.gx=((int16_t)(*(data_buf+11)<<8)|*(data_buf+12));
+	flow_debug.gy=((int16_t)(*(data_buf+13)<<8)|*(data_buf+14));
+	flow_debug.gz=((int16_t)(*(data_buf+15)<<8)|*(data_buf+16));
+	flow_debug.hx=((int16_t)(*(data_buf+17)<<8)|*(data_buf+18));
+	flow_debug.hy=((int16_t)(*(data_buf+19)<<8)|*(data_buf+20));
+  flow_debug.hz=((int16_t)(*(data_buf+21)<<8)|*(data_buf+22));
 
-//	}		
+	}		
 	else if(*(data_buf+2)==0x02)//CAL
   { 
 	  mpu6050.Acc_Offset.x=(int16_t)(*(data_buf+4)<<8)|*(data_buf+5);
@@ -447,7 +447,7 @@ void Send_IMU_TO_FLOW(void)
 	data_to_send[_cnt++]=BYTE1(_temp);
 	data_to_send[_cnt++]=BYTE0(_temp);
 	
-  _temp =(vs16)( circle.use_spd);//ultra_distance;
+  _temp =(vs16)( circle.use_spd&&circle.connect);//ultra_distance;
 	data_to_send[_cnt++]=BYTE0(_temp);
 	
 	
@@ -818,7 +818,7 @@ void Data_Receive_Anl5(u8 *data_buf,u8 num)
 	circle.z=(int16_t)((*(data_buf+9)<<8)|*(data_buf+10));
 	circle.pit=(int16_t)((*(data_buf+11)<<8)|*(data_buf+12));
 	circle.rol=(int16_t)((*(data_buf+13)<<8)|*(data_buf+14));
-	circle.yaw=To_180_degrees((int16_t)((*(data_buf+15)<<8)|*(data_buf+16))-180);	
+	circle.yaw=To_180_degrees((int16_t)((*(data_buf+15)<<8)|*(data_buf+16))-90);	
 	circle.spdx=(int16_t)((*(data_buf+17)<<8)|*(data_buf+18));
 	circle.spdy=(int16_t)((*(data_buf+19)<<8)|*(data_buf+20));
 	}	
@@ -1680,13 +1680,14 @@ void Data_Receive_Anl4(u8 *data_buf,u8 num)
 		sum += *(data_buf+i);
 	if(!(sum==*(data_buf+num-1)))		return;		//ÅÐ¶Ïsum
 	if(!(*(data_buf)==0xAA && *(data_buf+1)==0xAF))		return;		//ÅÐ¶ÏÖ¡Í·
-	if((Rc_Get_PWM.THROTTLE>1139+5||Rc_Get_PWM.THROTTLE<1139-5)&&Rc_Get_PWM.THROTTLE!=1000)
+	#if !USE_RECIVER_MINE
+	if((Rc_Get_PWM.THROTTLE>1139+5||Rc_Get_PWM.THROTTLE<1139-5||Rc_Get_PWM.update)&&Rc_Get_PWM.THROTTLE!=1000)
 	Feed_Rc_Dog(2);//Í¨ÐÅ¿´ÃÅ¹·Î¹¹·
+	#endif
   if(*(data_buf+2)==0x66)//RC_GET1
   {
 		for(i=0;i<32;i++)
 		NRF24L01_RXDATA[i]=*(data_buf+i+4);
-		
 	  NRF_DataAnl();
   
 	}
