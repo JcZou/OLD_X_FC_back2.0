@@ -203,12 +203,12 @@ void nrf_task(void *pdata)
 		 
 		 
 		if(Rc_Get_PWM.update){
-		RX_CH_PWM[THRr]=	LIMIT(Rc_Get_PWM.THROTTLE-RX_CH_FIX_PWM[THRr]-20,1000,2000)	;
-		RX_CH_PWM[ROLr]=  my_deathzoom_rc(Rc_Get_PWM.ROLL-RX_CH_FIX_PWM[ROLr]-20,5)	;
-		RX_CH_PWM[PITr]=  my_deathzoom_rc(Rc_Get_PWM.PITCH-RX_CH_FIX_PWM[PITr]-20,5)	;
+		RX_CH_PWM[THRr]=	LIMIT(Rc_Get_PWM.THROTTLE-RX_CH_FIX_PWM[THRr]-3,1000,2000)	;
+		RX_CH_PWM[ROLr]=  my_deathzoom_rc(Rc_Get_PWM.ROLL-RX_CH_FIX_PWM[ROLr]-3,5)	;
+		RX_CH_PWM[PITr]=  my_deathzoom_rc(Rc_Get_PWM.PITCH-RX_CH_FIX_PWM[PITr]-3,5)	;
 
 		if(!mode.yaw_imu_control)	
-		RX_CH_PWM[YAWr]=  my_deathzoom_rc(Rc_Get_PWM.YAW-RX_CH_FIX_PWM[YAWr]-20,5)	;
+		RX_CH_PWM[YAWr]=  my_deathzoom_rc(Rc_Get_PWM.YAW-RX_CH_FIX_PWM[YAWr]-3,5)	;
 		else{	
 		if(fabs( ypr_sb[2])>32&&fabs(ypr_sb[1])<15)	
 		RX_CH_PWM[YAWr]=  limit_mine(ypr_sb[2]*10,500)	+1500;
@@ -232,24 +232,33 @@ void nrf_task(void *pdata)
 		//------------0 1   |   2 3       KEY_SEL
 		#if USE_RECIVER_MINE		
 		mode.flow_hold_position=KEY_SEL[0];
+		mode.height_safe=KEY_SEL[1];
     #else
-    mode.en_sonar_avoid=KEY_SEL[0];		 
+    mode.en_sonar_avoid=KEY_SEL[0];		
+    mode.en_sd_save=KEY_SEL[1];		
     #endif
-		mode.en_sd_save=KEY_SEL[1];
+		
 		mode.en_pid_sb_set=KEY_SEL[2];//使能PID设置	
 //-------------------------------------------------	
+		#if !USE_RECIVER_MINE
+		if(Rc_Get_PWM.RST>1500)
+		fly_ready=1;
+		else
+		fly_ready=0;
+		#else
 		#if  DEBUG_WITHOUT_SB
 		if(cnt2++>200)//
 		{fly_ready=1;cnt2=200+1;}
 		#else
 			#if !USE_RC_GROUND
-				if(Rc_Get_PWM.AUX1>1500)
+				if(Rc_Get_PWM.RST>1500)
 					fly_ready=1;
 					else
 					fly_ready=0;
 			#else
 			fly_ready=KEY_SEL[3];//解锁
 			#endif
+		#endif
 		#endif
 					
 	  //------------7 6 5 4  |  3 2 1 0  KEY
@@ -271,7 +280,7 @@ void nrf_task(void *pdata)
 //		if(mode.flow_hold_position<1)
 //			mode.height_safe=1;
 //		else{
-		#if USE_RC_GROUND
+		#if USE_RC_GROUND&&!USE_RECIVER_MINE
 			if(Rc_Get_PWM.AUX1>1500)
 			mode.height_safe=1;//mode.en_sd_save=1;
 			else

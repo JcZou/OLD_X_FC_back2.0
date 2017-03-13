@@ -236,7 +236,7 @@ void Mode_FC(void)
 		}	
 #else
     //定高模式判断
-		if( RX_CH_PWM[AUX4r] >1900 )
+		if(Rc_Get_PWM.HEIGHT_MODE <1200 )
 		{
 				if(ultra_ok == 1)
 			{
@@ -247,11 +247,11 @@ void Mode_FC(void)
 				height_ctrl_mode = 1;//气压计
 			}
 		}
-		else if(RX_CH_PWM[AUX4r] >1400 &&RX_CH_PWM[AUX4r] <1600 )
+		else if(Rc_Get_PWM.HEIGHT_MODE>1400 &&Rc_Get_PWM.HEIGHT_MODE <1600 )
 		{
 			height_ctrl_mode = 1;//气压计
 		}
-		else if(RX_CH_PWM[AUX4r] <1200 )
+		else if(Rc_Get_PWM.HEIGHT_MODE >1800 )
 		{
 			
 				height_ctrl_mode = 0;//手动
@@ -259,9 +259,9 @@ void Mode_FC(void)
 		}
 		
 		//定点模式判断
-		if(RX_CH_PWM[AUX3r]>1800)		
+		if(Rc_Get_PWM.POS_MODE>1800)		
 		mode.flow_hold_position=2;	//智能
-		else if(RX_CH_PWM[AUX3r]<1400)
+		else if(Rc_Get_PWM.POS_MODE<1400)
 		mode.flow_hold_position=0;  //手动
     else
 		mode.flow_hold_position=1;	//光流		

@@ -1692,9 +1692,9 @@ void Data_Receive_Anl4(u8 *data_buf,u8 num)
   
 	}
 	else if(*(data_buf+2)==0x01)//RC
-	{
-	  Rc_Get.PITCH=((int16_t)(*(data_buf+4)<<8)|*(data_buf+5));
-		Rc_Get.ROLL=((int16_t)(*(data_buf+6)<<8)|*(data_buf+7));
+	{ 
+	  Rc_Get.ROLL=((int16_t)(*(data_buf+4)<<8)|*(data_buf+5));
+		Rc_Get.PITCH=((int16_t)(*(data_buf+6)<<8)|*(data_buf+7));
 		Rc_Get.THROTTLE=((int16_t)(*(data_buf+8)<<8)|*(data_buf+9));
 		Rc_Get.YAW=((int16_t)(*(data_buf+10)<<8)|*(data_buf+11));
 		
@@ -1716,6 +1716,23 @@ void Data_Receive_Anl4(u8 *data_buf,u8 num)
 		KEY[6]=*(data_buf+32);
 		KEY[7]=*(data_buf+33);
 		Rc_Get.update=*(data_buf+34);
+		if(Rc_Get.update)
+		{	Feed_Rc_Dog(2);
+		RX_CH[AUX1r]=Rc_Get.AUX1;
+		RX_CH[AUX4r]=Rc_Get.AUX4;
+		RX_CH[AUX3r]=Rc_Get.AUX3;
+		RX_CH[AUX2r]=Rc_Get.AUX2;
+		ctrl_angle_offset.x =(float)(Rc_Get.AUX1-500)/1000.*MAX_FIX_ANGLE*2;
+		ctrl_angle_offset.y =(float)(Rc_Get.AUX2-500)/1000.*MAX_FIX_ANGLE*2;
+
+		if(fabs(ctrl_angle_offset.x )<0.2)  {ctrl_angle_offset.x =0;}
+	 	if(fabs(ctrl_angle_offset.y )<0.2)  {ctrl_angle_offset.y =0;}
+		
+	  RX_CH[THRr]=	Rc_Get.THROTTLE-RX_CH_FIX[THRr]	;
+	  RX_CH[ROLr]=  my_deathzoom_rc(Rc_Get.ROLL-RX_CH_FIX[ROLr],100)	;
+	  RX_CH[PITr]=  my_deathzoom_rc(Rc_Get.PITCH-RX_CH_FIX[PITr],100)	;
+		RX_CH[YAWr]=  Rc_Get.YAW-RX_CH_FIX[YAWr]	;
+		}
 	}
 		else if(*(data_buf+2)==0x02)//RC
 	{
@@ -1744,11 +1761,14 @@ void Data_Receive_Anl4(u8 *data_buf,u8 num)
 		Rc_Get_PWM.YAW=((int16_t)(*(data_buf+10)<<8)|*(data_buf+11));
 		
 		Rc_Get_PWM.AUX1=((int16_t)(*(data_buf+12)<<8)|*(data_buf+13));
-		Rc_Get_PWM.RST=((int16_t)(*(data_buf+14)<<8)|*(data_buf+15));
-		Rc_Get_PWM.HEIGHT_MODE=((int16_t)(*(data_buf+16)<<8)|*(data_buf+17));
-		Rc_Get_PWM.POS_MODE=((int16_t)(*(data_buf+18)<<8)|*(data_buf+19));
+		Rc_Get_PWM.AUX2=((int16_t)(*(data_buf+14)<<8)|*(data_buf+15));
+		Rc_Get_PWM.AUX3=((int16_t)(*(data_buf+16)<<8)|*(data_buf+17));
+		Rc_Get_PWM.AUX4=((int16_t)(*(data_buf+18)<<8)|*(data_buf+19));
 		Rc_Get_PWM.AUX5=((int16_t)(*(data_buf+20)<<8)|*(data_buf+21));
 		Rc_Get_PWM.update=*(data_buf+22);
+		Rc_Get_PWM.POS_MODE=Rc_Get_PWM.AUX3;
+		Rc_Get_PWM.HEIGHT_MODE=Rc_Get_PWM.AUX4;
+		Rc_Get_PWM.RST=Rc_Get_PWM.AUX2;
 			
 	}
 }

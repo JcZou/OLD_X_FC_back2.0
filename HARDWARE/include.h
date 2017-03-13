@@ -128,8 +128,8 @@ extern float dj_angle_set,dj_angle_offset[3],Angle_Yun[2];
 extern float off_yaw;//遥控方向
 
 //=================PWM========================
-//#define HOLD_THR_PWM  450
-#define HOLD_THR_PWM  LIMIT(370,0,500)
+#define HOLD_THR_PWM  LIMIT(450,0,500)
+//#define HOLD_THR_PWM  LIMIT(370,0,500)
 #define MAX_PWM				LIMIT(2*HOLD_THR_PWM,0,1000)/10///%	最大PWM输出为100%油门
 #define MAX_THR       LIMIT(2*HOLD_THR_PWM*0.8,0,1000)/10 			///%	油门通道最大占比80%，留20%给控制量
 #define READY_SPEED   LIMIT(20*HOLD_THR_PWM/500,0,20)      ///%	解锁后电机转速20%油门

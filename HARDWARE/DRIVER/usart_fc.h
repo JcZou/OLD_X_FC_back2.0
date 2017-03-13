@@ -33,7 +33,7 @@ typedef struct int16_rcget{
 	      int16_t HEIGHT_MODE;
 	      int16_t POS_MODE;
 	      u8 update;
-				u8 RST;}RC_GETDATA;
+				int16_t RST;}RC_GETDATA;
 
 extern RC_GETDATA Rc_Get,Rc_Get_PWM;//接收到的RC数据,1000~2000
 				
